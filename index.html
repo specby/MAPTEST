@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>전기차 충전소 위치</title>
+</head>
+<body>
+	<div id="map" style="height:800px;"></div>
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e66a6373459acde792a7e3bcac170995"></script>
+	<script>
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: new kakao.maps.LatLng(36.3770, 127.3785), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+// 마커를 표시할 위치입니다 
+var position =  new kakao.maps.LatLng(36.3770, 127.3785); 
+
+// 마커를 표시할 위치와 내용을 가지고 있는 객체 배열입니다 
+var positions = [
+    {
+        content: '<div>대전현대EPIT 충전소(국립중앙박물관)</div>', 
+        latlng: new kakao.maps.LatLng(36.3770, 127.3785)
+    },
+    {
+        content: '<div>신세계백화점 충전소</div>', 
+        latlng: new kakao.maps.LatLng(36.375945, 127.382033)
+    },
+    {
+        content: '<div>이마트 트레이더스(월평점)</div>', 
+        latlng: new kakao.maps.LatLng(36.357735, 127.362995)
+    },
+    {
+        content: '<div>대전광역시청 부설주차장</div>',
+        latlng: new kakao.maps.LatLng(36.350983, 127.386215)
+    }
+];
+
+for (var i = 0; i < positions.length; i ++) {
+    // 마커를 생성합니다
+    var marker = new kakao.maps.Marker({
+        map: map, // 마커를 표시할 지도
+        position: positions[i].latlng // 마커의 위치
+    });
+
+    // 마커에 표시할 인포윈도우를 생성합니다 
+    var infowindow = new kakao.maps.InfoWindow({
+        content: positions[i].content // 인포윈도우에 표시할 내용
+    });
+
+    // 마커에 mouseover 이벤트와 mouseout 이벤트를 등록합니다
+    // 이벤트 리스너로는 클로저를 만들어 등록합니다 
+    // for문에서 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
+    kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+    kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+}
+
+// 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
+function makeOverListener(map, marker, infowindow) {
+    return function() {
+        infowindow.open(map, marker);
+    };
+}
+
+// 인포윈도우를 닫는 클로저를 만드는 함수입니다 
+function makeOutListener(infowindow) {
+    return function() {
+        infowindow.close();
+    };
+}
+	</script>
+</body>
+</html>
